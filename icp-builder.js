@@ -245,7 +245,7 @@
       arrRef.forEach((v, idx)=>{
         const chip = document.createElement('span');
         chip.className = 'chip';
-        chip.innerHTML = `${escapeHtml(v)} <button type="button" class="remove" aria-label="Remove">Ã—</button>`;
+        chip.innerHTML = `${escapeHtml(v)} <button type="button" class="remove" aria-label="Remove">\u00D7</button>`;
         chip.querySelector('button').addEventListener('click', ()=>{
           arrRef.splice(idx,1);
           draw();
@@ -647,15 +647,15 @@
     const ds = Number(state.dealSize)||0;
     const seniors = Array.from(state.seniorities).map(s=>labelForId(s, 'seniority')).join(', ') || 'mixed seniority';
     const depts = Array.from(state.departments).map(s=>labelForId(s, 'dept')).join(', ') || 'multiple departments';
-    const techs = Array.from(state.tech).map(s=>labelForId(s, 'tech')).join(', ') || 'diverse stacks';
-    const titles = state.titles.length ? state.titles.join(', ') : 'role-specific operators';
+    const techs = Array.from(state.tech).map(s=>labelForId(s, 'tech')).join(', ') || 'diverse tech stacks';
+    const titles = state.titles.length ? state.titles.join(', ') : 'role-specific decision makers';
     
     let geo = 'Selected region';
     if (state.geoScope === 'local'){
       const parts = [];
       if (state.zip) parts.push(`ZIP ${state.zip}`);
       if (state.state) parts.push(state.state);
-      if (state.radius) parts.push(`~${state.radius} miles`);
+      if (state.radius) parts.push(`${state.radius}mi radius`);
       geo = parts.join(', ') || 'Local metro';
     } else if (state.geoScope === 'national'){
       geo = state.country || 'Selected country';
@@ -665,19 +665,79 @@
       geo = [...r, ...c].join(', ') || 'Selected regions/countries';
     }
     
-    const pov = state.offer || 'AI Lead Gen';
+    const pov = state.offer || 'AI Lead Generation';
     const bm = state.businessModel || '';
     const conf = state.confidence;
-
-    return [
-      `Target Profile: ${market} organizations in ${industry} with typical deal size around ${ds ? `$${ds.toLocaleString()}`:'your target band'}.`,
-      `Decision Makers: Seniorities (${seniors}); Departments (${depts}). Title targets include: ${titles}.`,
-      `Buying Triggers: Existing stack signals such as ${techs}.`,
-      `Geo Focus: ${geo}.`,
-      `Value Proposition: ${pov} reduces CAC, increases reply rates, and amplifies pipeline velocity${bm ? ` for ${bm.toLowerCase()} firms` : ''}; prioritize accounts showing RevOps maturity and outbound appetite.`,
-      `Messaging Angles: ROI-first, proof-driven, short-cycle test offers; emphasize time-to-first-meeting and downstream revenue impact.`,
-      `Confidence: ${conf}%.`
-    ].join(' ');
+    
+    // Build sections for structured output
+    const sections = [];
+    
+    // Executive Summary
+    sections.push({
+      title: '\u{1F4CA} Executive Summary',
+      content: `Your ideal customer profile targets ${market} ${industry} companies with ${state.empRange.replace('-', '\u2013')} employees and estimated ${state.revRange.replace('m', 'M').replace('-', '\u2013')} annual revenue. These organizations are in the market for ${pov} solutions, with typical deal values around ${ds ? `$${ds.toLocaleString()}` : 'your target range'}.`
+    });
+    
+    // Decision Maker Profile
+    sections.push({
+      title: '\u{1F464} Decision Maker Profile',
+      content: `Target personas include ${seniors} level stakeholders across ${depts} departments. Key titles to engage: ${titles}. These decision-makers are typically responsible for evaluating and implementing solutions like yours.`
+    });
+    
+    // Buying Signals & Tech Stack
+    if (state.tech.size > 0) {
+      sections.push({
+        title: '\u{1F514} Buying Signals & Tech Stack',
+        content: `Companies using ${techs} demonstrate technical sophistication and readiness for ${pov}. These technology signals indicate they're already investing in similar solutions and have budget allocated for this category.`
+      });
+    }
+    
+    // Geographic Focus
+    sections.push({
+      title: '\u{1F30D} Geographic Focus',
+      content: `Target market is concentrated in ${geo}. This geographic targeting ensures your outreach aligns with your service delivery capabilities and market presence.`
+    });
+    
+    // Value Proposition Strategy
+    let vpContent = `Position ${pov} as a solution that reduces customer acquisition cost, increases reply rates, and accelerates pipeline velocity`;
+    if (bm) vpContent += ` specifically for ${bm.toLowerCase()} business models`;
+    vpContent += '. Emphasize proven ROI and quick time-to-value in your messaging.';
+    
+    sections.push({
+      title: '\u{1F4A1} Value Proposition Strategy',
+      content: vpContent
+    });
+    
+    // Outreach Recommendations
+    let outreachRec = '';
+    const cycleMap = {
+      'Short (< 30 days)': 'Given the short sales cycle, focus on immediate pain points and quick wins. Lead with case studies showing rapid implementation and fast ROI.',
+      'Medium (30\u201390 days)': 'With a medium-length sales cycle, balance quick wins with strategic value. Plan for 3-4 touchpoints mixing education and social proof.',
+      'Long (> 90 days)': 'The extended sales cycle requires relationship building and thought leadership. Focus on education, industry insights, and long-term value creation.'
+    };
+    outreachRec = cycleMap[state.salesCycle] || 'Tailor your outreach cadence to match the buying journey and decision-making timeline.';
+    
+    sections.push({
+      title: '\u{1F4DE} Outreach Recommendations',
+      content: outreachRec
+    });
+    
+    // Confidence Assessment
+    let confAssessment = '';
+    if (conf < 35) {
+      confAssessment = 'Consider adding more filters to narrow your targeting. More specific criteria will improve match quality and response rates.';
+    } else if (conf < 70) {
+      confAssessment = 'Your ICP has solid definition. Test this profile and monitor performance metrics to refine further.';
+    } else {
+      confAssessment = 'Excellent ICP definition with high confidence. Consider creating a relaxed variant to expand addressable market once you validate this core profile.';
+    }
+    
+    sections.push({
+      title: '\u2713 Profile Confidence',
+      content: `${conf}% confidence score. ${confAssessment}`
+    });
+    
+    return sections;
   }
 
   // ------- Typewriter -------------------------------------------------------
@@ -715,45 +775,62 @@
       `Departments: ${dCount}`,
       `Tech: ${tCount}`
     ];
-    el.summaryBar.textContent = parts.join(' â€¢ ');
+    el.summaryBar.textContent = parts.join(' \u2022 ');
   }
 
   // ------- Output render ----------------------------------------------------
   async function renderOutput(){
     renderSummary();
 
-    const narrative = buildNarrative();
+    const sections = buildNarrative();
     
     if (el.output){
       el.output.innerHTML = '';
       
-      const sec = document.createElement('section');
-      sec.className = 'out-sec';
+      // Show analyzing message
+      const analyzing = document.createElement('div');
+      analyzing.className = 'out-sec';
+      analyzing.innerHTML = '<div class="out-h3">\u{1F916} AI Analyzing Your ICP...</div><div class="out-body muted">Processing filters and generating insights...</div>';
+      el.output.appendChild(analyzing);
+      
+      // Wait a moment for effect
+      await new Promise(res => setTimeout(res, 800));
+      
+      // Clear and build sections
+      el.output.innerHTML = '';
+      
+      for (const section of sections) {
+        const sec = document.createElement('section');
+        sec.className = 'out-sec';
 
-      const h = document.createElement('div');
-      h.className = 'out-h3';
-      h.textContent = 'ICP Narrative';
-      sec.appendChild(h);
+        const h = document.createElement('div');
+        h.className = 'out-h3';
+        h.textContent = section.title;
+        sec.appendChild(h);
 
-      const body = document.createElement('div');
-      body.className = 'out-body';
-      sec.appendChild(body);
+        const body = document.createElement('div');
+        body.className = 'out-body';
+        sec.appendChild(body);
 
-      el.output.appendChild(sec);
-      await typewriterInto(body, narrative, 8);
+        el.output.appendChild(sec);
+        
+        // Type out each section with slight delay between sections
+        await typewriterInto(body, section.content, 6);
+        await new Promise(res => setTimeout(res, 200));
+      }
 
-      // Add details section
+      // Add filter summary section
       const details = document.createElement('section');
       details.className = 'out-sec';
       details.innerHTML = `
-        <div class="out-h3">Quick Filters</div>
+        <div class="out-h3">\u{1F50D} Applied Filters Summary</div>
         <div class="out-body">
-          <div><strong>Seniorities:</strong> ${Array.from(state.seniorities).map(id=>escapeHtml(labelForId(id,'seniority'))).join(', ') || 'â€”'}</div>
-          <div><strong>Departments:</strong> ${Array.from(state.departments).map(id=>escapeHtml(labelForId(id,'dept'))).join(', ') || 'â€”'}</div>
-          <div><strong>Tech Signals:</strong> ${Array.from(state.tech).map(id=>escapeHtml(labelForId(id,'tech'))).join(', ') || 'â€”'}</div>
-          <div><strong>Titles:</strong> ${state.titles.map(escapeHtml).join(', ') || 'â€”'}</div>
-          <div><strong>Keywords:</strong> ${state.keywords.map(escapeHtml).join(', ') || 'â€”'}</div>
-          <div><strong>Company Keywords:</strong> ${state.companyKeywords.map(escapeHtml).join(', ') || 'â€”'}</div>
+          <div><strong>Seniorities:</strong> ${Array.from(state.seniorities).map(id=>escapeHtml(labelForId(id,'seniority'))).join(', ') || '\u2014'}</div>
+          <div><strong>Departments:</strong> ${Array.from(state.departments).map(id=>escapeHtml(labelForId(id,'dept'))).join(', ') || '\u2014'}</div>
+          <div><strong>Tech Signals:</strong> ${Array.from(state.tech).map(id=>escapeHtml(labelForId(id,'tech'))).join(', ') || '\u2014'}</div>
+          <div><strong>Job Titles:</strong> ${state.titles.map(escapeHtml).join(', ') || '\u2014'}</div>
+          <div><strong>Keywords:</strong> ${state.keywords.map(escapeHtml).join(', ') || '\u2014'}</div>
+          ${state.companyKeywords.length ? `<div><strong>Company Keywords:</strong> ${state.companyKeywords.map(escapeHtml).join(', ')}</div>` : ''}
         </div>
       `;
       el.output.appendChild(details);
@@ -763,21 +840,28 @@
   // ------- Exports ----------------------------------------------------------
   function exportTxt(){
     const lines = [];
-    lines.push('# ICP Narrative');
-    lines.push(buildNarrative());
+    const sections = buildNarrative();
+    
+    lines.push('# ICP NARRATIVE\n');
+    sections.forEach(section => {
+      lines.push(`## ${section.title}`);
+      lines.push(section.content);
+      lines.push('');
+    });
+    
+    lines.push('\n# APPLIED FILTERS');
+    lines.push(`Seniorities: ${Array.from(state.seniorities).map(id=>labelForId(id,'seniority')).join(', ') || '-'}`);
+    lines.push(`Departments: ${Array.from(state.departments).map(id=>labelForId(id,'dept')).join(', ') || '-'}`);
+    lines.push(`Tech Signals: ${Array.from(state.tech).map(id=>labelForId(id,'tech')).join(', ') || '-'}`);
+    lines.push(`Job Titles: ${state.titles.join(', ') || '-'}`);
+    lines.push(`Keywords: ${state.keywords.join(', ') || '-'}`);
+    lines.push(`Company Keywords: ${state.companyKeywords.join(', ') || '-'}`);
     lines.push('');
-    lines.push('# Quick Filters');
-    lines.push(`Seniorities: ${Array.from(state.seniorities).map(id=>labelForId(id,'seniority')).join(', ') || 'â€”'}`);
-    lines.push(`Departments: ${Array.from(state.departments).map(id=>labelForId(id,'dept')).join(', ') || 'â€”'}`);
-    lines.push(`Tech Signals: ${Array.from(state.tech).map(id=>labelForId(id,'tech')).join(', ') || 'â€”'}`);
-    lines.push(`Titles: ${state.titles.join(', ') || 'â€”'}`);
-    lines.push(`Keywords: ${state.keywords.join(', ') || 'â€”'}`);
-    lines.push(`Company Keywords: ${state.companyKeywords.join(', ') || 'â€”'}`);
-    lines.push('');
-    lines.push('# Apollo Link');
+    lines.push('\n# APOLLO LINKS');
+    lines.push('## Standard Link');
     lines.push(state.apolloUrl || '');
     lines.push('');
-    lines.push('# Apollo Link (Relaxed)');
+    lines.push('## Relaxed Link (More Volume)');
     lines.push(state.apolloUrlRelaxed || '');
     return lines.join('\n');
   }
@@ -851,6 +935,12 @@
   function bindActions(){
     if (el.btnGenerate){
       el.btnGenerate.addEventListener('click', async ()=>{
+        // Show loading state
+        if (el.btnGenerate) {
+          el.btnGenerate.disabled = true;
+          el.btnGenerate.textContent = '\u2699\uFE0F Generating...';
+        }
+        
         const groups = { person:true, org:true, kw:true, misc:true };
         const url = buildApolloUrl(groups);
         const relaxed = buildApolloUrlRelaxed();
@@ -869,12 +959,28 @@
 
         await renderOutput();
         
+        // Success feedback
         if (el.inlineMsg){
-          el.inlineMsg.textContent = 'Generated! Review below.';
-          setTimeout(()=>{ el.inlineMsg.textContent=''; }, 2000);
+          el.inlineMsg.style.color = 'var(--phage-green)';
+          el.inlineMsg.style.fontWeight = '600';
+          el.inlineMsg.textContent = '\u2713 ICP Generated Successfully! Scroll down to view results.';
+          setTimeout(()=>{ 
+            el.inlineMsg.textContent='';
+            el.inlineMsg.style.color = '';
+            el.inlineMsg.style.fontWeight = '';
+          }, 4000);
         }
         
-        if (el.resultsTop) smoothScrollTo(el.resultsTop);
+        // Reset button
+        if (el.btnGenerate) {
+          el.btnGenerate.disabled = false;
+          el.btnGenerate.textContent = '\u2699 Generate ICP';
+        }
+        
+        // Smooth scroll with delay to let message show
+        setTimeout(()=>{
+          if (el.resultsTop) smoothScrollTo(el.resultsTop);
+        }, 500);
         
         renderDebug();
       });
