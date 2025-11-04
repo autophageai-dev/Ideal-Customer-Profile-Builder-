@@ -1,0 +1,531 @@
+{% comment %}
+  Autophage ICP Builder - Shopify Section
+  v3.9 - Matrix Dark Theme
+{% endcomment %}
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Styles - Reference the CSS file from Shopify assets -->
+{{ 'icp-builder.css' | asset_url | stylesheet_tag }}
+
+<div class="a-icp" id="autophageICP" data-apollo-base="https://app.apollo.io/#/people">
+  <div class="wrap">
+    <h1 class="h1">AUTOPHAGE ICP BUILDER</h1>
+    <p class="subtitle">
+      Define your ideal customer, generate an Apollo search link, and get an AI-written narrative that explains the "why".
+    </p>
+
+    <!-- Input Grid -->
+    <div class="grid" id="inputGrid" role="region" aria-label="ICP Input Panels">
+      
+      <!-- A: Company / Offer -->
+      <section class="panel card" aria-labelledby="hdr-offer">
+        <h2 id="hdr-offer" class="h2">Company / Offer Setup</h2>
+
+        <div class="row">
+          <div class="label">
+            Your Offer / Service
+            <span class="tip" tabindex="0" aria-label="Help: Your Offer">i
+              <span class="bubble" role="tooltip">Used in narrative and as optional Apollo keyword.</span>
+            </span>
+          </div>
+          <input id="offer" class="input" type="text" placeholder="AI Lead Generation" aria-label="Your offer">
+        </div>
+
+        <div class="row">
+          <div class="label">
+            Your Industry
+            <span class="tip" tabindex="0" aria-label="Help: Your Industry">i
+              <span class="bubble" role="tooltip">Primary industry you operate in.</span>
+            </span>
+          </div>
+          <select id="yourIndustry" class="select" aria-label="Your industry">
+            <option value="" selected>Select Your Industry</option>
+            <option>Agency / Consulting</option>
+            <option>Home Services</option>
+            <option>Healthcare</option>
+            <option>Financial Services / Insurance</option>
+            <option>Legal</option>
+            <option>SaaS / Technology</option>
+            <option>eCommerce / Retail</option>
+            <option>Education / Coaching</option>
+            <option>Automotive</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <div class="label">
+            Target Client Industry (Preset)
+            <span class="tip" tabindex="0" aria-label="Help: Target Client Industry">i
+              <span class="bubble" role="tooltip">Prefills pains, triggers, values, tech signals, and suggested tags.</span>
+            </span>
+          </div>
+          <select id="industry" class="select" aria-label="Target client industry">
+            <option value="" selected>Select Target Client Industry</option>
+            <option value="technology">Technology</option>
+            <option value="roofing">Roofing</option>
+            <option value="solar">Solar</option>
+            <option value="hvac">HVAC</option>
+            <option value="plumbing">Plumbing</option>
+            <option value="landscaping">Landscaping</option>
+            <option value="pool">Pool Services</option>
+            <option value="realestate">Real Estate</option>
+            <option value="insurance">Insurance</option>
+            <option value="legal">Legal</option>
+            <option value="coaching">Coaching / Consulting</option>
+            <option value="dental">Dental</option>
+            <option value="medspa">Med Spa</option>
+            <option value="fitness">Fitness</option>
+            <option value="automotive">Automotive</option>
+            <option value="other">Other</option>
+          </select>
+          <p class="muted" id="presetNote">Select a preset to load realistic defaults.</p>
+        </div>
+
+        <div class="row">
+          <div class="label">
+            Add More Industries
+            <span class="tip" tabindex="0" aria-label="Help: Add Industries">i
+              <span class="bubble" role="tooltip">Expands results across multiple industries (sent to Apollo as industries).</span>
+            </span>
+          </div>
+          <div class="chip-input">
+            <input id="industryInput" class="input" type="text" placeholder="Type and press Enter to add industries" aria-label="Add industries">
+            <div id="industriesChips" class="chip-row" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="label">
+            Add Keyword Tags
+            <span class="tip" tabindex="0" aria-label="Help: Keyword Tags">i
+              <span class="bubble" role="tooltip">Adds keyword filters in Apollo (e.g., "AI", "Marketing Automation", "CRM").</span>
+            </span>
+          </div>
+          <div class="chip-input">
+            <input id="keywordInput" class="input" type="text" placeholder="Type and press Enter to add keyword tags" autocomplete="off" aria-label="Add keyword tags">
+            <div id="keywordSuggest" class="suggest" role="listbox" style="display:none;"></div>
+            <div id="keywordsChips" class="chip-row" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <div class="row-inline">
+          <div class="col">
+            <div class="label">
+              Company Type
+              <span class="tip" tabindex="0" aria-label="Help: Company Type">i
+                <span class="bubble" role="tooltip">Helps narrow by organization structure.</span>
+              </span>
+            </div>
+            <select id="companyType" class="select" aria-label="Company type">
+              <option value="" selected>Any</option>
+              <option value="private">Private</option>
+              <option value="public">Public</option>
+              <option value="nonprofit">Nonprofit</option>
+              <option value="education">Education</option>
+              <option value="government">Government</option>
+            </select>
+          </div>
+          <div class="col">
+            <div class="label">
+              Company Keywords
+              <span class="tip" tabindex="0" aria-label="Help: Company Keywords">i
+                <span class="bubble" role="tooltip">Matches company website/description keywords.</span>
+              </span>
+            </div>
+            <div class="chip-input">
+              <input id="companyKeywordInput" class="input" type="text" placeholder="Type and press Enter" aria-label="Add company keywords">
+              <div id="companyKeywordsChips" class="chip-row" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- B: Firmographics -->
+      <section class="panel card" aria-labelledby="hdr-firmo">
+        <h2 id="hdr-firmo" class="h2">Firmographics</h2>
+
+        <div class="row-inline--firmo">
+          <div class="firmo-col">
+            <div class="label">
+              Employee Range
+              <span class="tip" tabindex="0" aria-label="Help: Employee Range">i
+                <span class="bubble" role="tooltip">Maps to Apollo headcount (numeric range).</span>
+              </span>
+            </div>
+            <select id="empRange" class="select select--firmo" aria-label="Employee range">
+              <option value="1-10">1–10</option>
+              <option value="11-50" selected>11–50</option>
+              <option value="51-200">51–200</option>
+              <option value="201-500">201–500</option>
+              <option value="501-1000">501–1,000</option>
+              <option value="1001-5000">1,001–5,000</option>
+              <option value="5001+">5,001+</option>
+            </select>
+          </div>
+          <div class="firmo-col">
+            <div class="label">
+              Annual Revenue
+              <span class="tip" tabindex="0" aria-label="Help: Annual Revenue">i
+                <span class="bubble" role="tooltip">Optional heuristic; helps match SMB vs Mid-Market vs Enterprise.</span>
+              </span>
+            </div>
+            <select id="revRange" class="select select--firmo" aria-label="Revenue range">
+              <option value="under-1m">Under $1M</option>
+              <option value="1m-5m" selected>$1M–$5M</option>
+              <option value="5m-10m">$5M–$10M</option>
+              <option value="10m-50m">$10M–$50M</option>
+              <option value="50m-100m">$50M–$100M</option>
+              <option value="100m+">$100M+</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="label">
+            Business Model
+            <span class="tip" tabindex="0" aria-label="Help: Business Model">i
+              <span class="bubble" role="tooltip">Adds a broad keyword tag to Apollo (use sparingly).</span>
+            </span>
+          </div>
+          <select id="businessModel" class="select" aria-label="Business model">
+            <option value="">Select Model</option>
+            <option value="Product-Based">Product-Based</option>
+            <option value="Service-Based">Service-Based</option>
+            <option value="Subscription">Subscription</option>
+            <option value="Marketplace">Marketplace</option>
+            <option value="Franchise">Franchise</option>
+          </select>
+        </div>
+
+        <h3 class="h2" style="margin-top:20px;">Sales Model</h3>
+        <div class="row-inline--pair">
+          <div class="col">
+            <div class="label">
+              Market Type
+              <span class="tip" tabindex="0" aria-label="Help: Market Type">i
+                <span class="bubble" role="tooltip">B2B vs. B2C informs personas and messaging angles.</span>
+              </span>
+            </div>
+            <div class="tabs" id="marketTabs" role="tablist" aria-label="Market Type">
+              <button type="button" class="tab active" data-market="B2B" role="tab" aria-selected="true">B2B</button>
+              <button type="button" class="tab" data-market="B2C" role="tab" aria-selected="false">B2C</button>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="label">
+              Sales Cycle
+              <span class="tip" tabindex="0" aria-label="Help: Sales Cycle">i
+                <span class="bubble" role="tooltip">Short &lt;30d, Medium 30–90d, Long &gt;90d. Affects cadence/messaging.</span>
+              </span>
+            </div>
+            <select id="salesCycle" class="select select--firmo" aria-label="Sales cycle">
+              <option selected>Short (&lt; 30 days)</option>
+              <option>Medium (30–90 days)</option>
+              <option>Long (&gt; 90 days)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="label">
+            Deal Size (USD)
+            <span class="tip" tabindex="0" aria-label="Help: Deal Size">i
+              <span class="bubble" role="tooltip">Sets tone for SMB vs Enterprise and can be appended as a tag (not strict).</span>
+            </span>
+          </div>
+          <div class="steps" id="dealSteps" role="radiogroup" aria-label="Deal size">
+            <button type="button" class="step" data-val="1000" role="radio" aria-checked="false" tabindex="0">$1K</button>
+            <button type="button" class="step active" data-val="5000" role="radio" aria-checked="true" tabindex="0">$5K</button>
+            <button type="button" class="step" data-val="10000" role="radio" aria-checked="false" tabindex="0">$10K</button>
+            <button type="button" class="step" data-val="25000" role="radio" aria-checked="false" tabindex="0">$25K</button>
+            <button type="button" class="step" data-val="50000" role="radio" aria-checked="false" tabindex="0">$50K</button>
+            <button type="button" class="step" data-val="100000" role="radio" aria-checked="false" tabindex="0">$100K+</button>
+          </div>
+          <input id="dealSize" type="hidden" value="5000">
+        </div>
+
+        <div class="row">
+          <div class="label">
+            Departments (People)
+            <span class="tip" tabindex="0" aria-label="Help: Departments">i
+              <span class="bubble" role="tooltip">Restrict person search to specific departments (e.g., Marketing).</span>
+            </span>
+          </div>
+          <div class="pill-row" id="departments" role="list"></div>
+        </div>
+
+        <div class="row">
+          <div class="label">
+            Tech Signals (Company)
+            <span class="tip" tabindex="0" aria-label="Help: Tech Signals">i
+              <span class="bubble" role="tooltip">Hyper-target by tech stack. Select multiple tiles.</span>
+            </span>
+          </div>
+
+          <div class="tile-grid" id="techTiles" role="list" aria-label="Tech Signals">
+            <!-- Tiles populated by JS -->
+          </div>
+
+          <div class="multi-select-tags" id="techTags" aria-live="polite"></div>
+        </div>
+
+        <div class="row">
+          <div class="label">
+            Funding Stage
+            <span class="tip" tabindex="0" aria-label="Help: Funding Stage">i
+              <span class="bubble" role="tooltip">Optional; narrows technology firms by maturity.</span>
+            </span>
+          </div>
+          <select id="fundingStage" class="select" aria-label="Funding stage">
+            <option value="" selected>Any</option>
+            <option value="seed">Seed</option>
+            <option value="series_a">Series A</option>
+            <option value="series_b">Series B</option>
+            <option value="series_c_plus">Series C+</option>
+            <option value="ipo">IPO</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- C: Geography -->
+      <section class="panel card" aria-labelledby="hdr-geo">
+        <h2 id="hdr-geo" class="h2">Geography</h2>
+
+        <div class="row">
+          <div class="label">
+            Scope
+            <span class="tip" tabindex="0" aria-label="Help: Scope">i
+              <span class="bubble" role="tooltip">Local uses ZIP/State + radius (approx metros). National/International use country/regions.</span>
+            </span>
+          </div>
+          <div class="tabs" id="scopeTabs" role="tablist" aria-label="Geo Scope">
+            <button type="button" class="tab active" data-scope="local" role="tab" aria-selected="true">Local</button>
+            <button type="button" class="tab" data-scope="national" role="tab" aria-selected="false">National</button>
+            <button type="button" class="tab" data-scope="international" role="tab" aria-selected="false">International</button>
+          </div>
+        </div>
+
+        <!-- Local -->
+        <div id="scopeLocal">
+          <div class="row-inline--pair">
+            <div class="col">
+              <div class="label">
+                ZIP Code
+                <span class="tip" tabindex="0" aria-label="Help: ZIP Code">i
+                  <span class="bubble" role="tooltip">We'll map this to nearby metro names for Apollo location filters.</span>
+                </span>
+              </div>
+              <input id="zip" class="input zip" type="text" inputmode="numeric" placeholder="Enter ZIP Code" maxlength="10" aria-label="ZIP code">
+            </div>
+            <div class="col">
+              <div class="label">
+                State
+                <span class="tip" tabindex="0" aria-label="Help: State">i
+                  <span class="bubble" role="tooltip">Fallback location if ZIP isn't recognized.</span>
+                </span>
+              </div>
+              <select id="state" class="select state" aria-label="State">
+                <option value="" selected>Choose State</option>
+                <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>DC</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:20px;">
+            <div class="label">
+              Radius (miles)
+              <span class="tip" tabindex="0" aria-label="Help: Radius">i
+                <span class="bubble" role="tooltip">Apollo doesn't do true radius. We approximate with nearby city/metro names.</span>
+              </span>
+            </div>
+            <input id="radius" class="input" type="range" min="5" max="100" step="5" value="25" aria-label="Radius in miles">
+            <div class="muted">~<span id="radiusVal">25</span> miles (approximate).</div>
+          </div>
+        </div>
+
+        <!-- National -->
+        <div id="scopeNational" style="display:none;">
+          <div class="row">
+            <div class="label">
+              Country
+              <span class="tip" tabindex="0" aria-label="Help: Country">i
+                <span class="bubble" role="tooltip">Sets national-level filters for person &amp; organization locations.</span>
+              </span>
+            </div>
+            <select id="country" class="select" aria-label="Country">
+              <option value="United States" selected>United States</option>
+              <option value="Canada">Canada</option>
+              <option value="United Kingdom">United Kingdom</option>
+              <option value="Australia">Australia</option>
+              <option value="New Zealand">New Zealand</option>
+              <option value="Ireland">Ireland</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- International -->
+        <div id="scopeInternational" style="display:none;">
+          <div class="row">
+            <div class="label">
+              Regions
+              <span class="tip" tabindex="0" aria-label="Help: Regions">i
+                <span class="bubble" role="tooltip">Select broad regions. You can also list priority countries below.</span>
+              </span>
+            </div>
+            <div class="pill-row" id="regions" role="list"></div>
+          </div>
+          <div class="row">
+            <div class="label">
+              Priority Countries
+              <span class="tip" tabindex="0" aria-label="Help: Countries">i
+                <span class="bubble" role="tooltip">Comma-separated; used as person &amp; organization locations in Apollo.</span>
+              </span>
+            </div>
+            <input id="countries" class="input" type="text" placeholder="United States, Canada, United Kingdom" aria-label="Priority countries">
+          </div>
+        </div>
+      </section>
+
+      <!-- D: Persona -->
+      <section class="panel card" aria-labelledby="hdr-persona">
+        <h2 id="hdr-persona" class="h2">Persona Filters</h2>
+
+        <div class="row">
+          <div class="label">
+            Seniority Levels
+            <span class="tip" tabindex="0" aria-label="Help: Seniority Levels">i
+              <span class="bubble" role="tooltip">Maps to Apollo personSeniorities — select all that match your decision-makers.</span>
+            </span>
+          </div>
+          <div class="pill-row" id="seniorities" role="list"></div>
+        </div>
+
+        <div class="row">
+          <div class="label">
+            Job Titles
+            <span class="tip" tabindex="0" aria-label="Help: Job Titles">i
+              <span class="bubble" role="tooltip">Type specific job titles (e.g., "Marketing Manager", "Head of Growth"). Added as Apollo personTitles.</span>
+            </span>
+          </div>
+          <div class="chip-input">
+            <input id="titleInput" class="input" type="text" placeholder="Type a job title and press Enter" aria-label="Add job title">
+            <div id="titlesChips" class="chip-row" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <label style="display:flex;gap:10px;align-items:center;">
+            <input type="checkbox" id="verifiedEmails" style="width:18px;height:18px;cursor:pointer;">
+            <span class="muted">Require verified emails (contactEmailStatusV2=verified)</span>
+          </label>
+        </div>
+
+        <div class="row">
+          <div class="label">Confidence Score</div>
+          <div class="conf-wrap">
+            <div class="conf"><span id="confFill" aria-hidden="true"></span></div>
+            <div class="conf-pct" id="confPct" aria-live="polite">0%</div>
+          </div>
+          <div class="hint" id="volumeHint"><span class="dot" aria-hidden="true"></span><span class="muted">Add filters to improve confidence & estimate volume</span></div>
+          <p class="muted" id="confNote">Tip: add titles/seniorities, industry, firmographics, and precise geo.</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Actions -->
+    <div class="action-bar" role="region" aria-label="Actions">
+      <button id="btnGenerate" class="btn">⚙️ Generate ICP</button>
+      <button id="btnReset" class="btn btn--ghost" type="button">↺ Reset</button>
+      <div id="inlineMsg" class="muted" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- Results -->
+    <div class="output-wrap" id="resultsTop">
+      <div class="card" id="outputCard">
+        <h2 class="h2">Results</h2>
+        <div id="summaryBar" class="muted" style="margin:-6px 0 14px;"></div>
+
+        <div id="output" class="output" aria-live="polite">
+          <div class="placeholder">Awaiting input… Your ICP narrative will render here with a typing animation once generated.</div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Apollo Link -->
+        <h2 class="h2" style="margin-top:6px;">Apollo Link</h2>
+        <div id="apolloWrap" class="row">
+          <div class="label">Encoded URL</div>
+          <div class="mono" id="apolloUrl" aria-live="polite">Generate ICP to see Apollo URL</div>
+
+          <div class="export-actions" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;">
+            <a id="btnOpenApollo" class="btn" href="#" target="_blank" rel="noopener">Open in Apollo</a>
+            <button id="btnOpenRelaxed" class="btn btn--ghost" type="button">Open relaxed link</button>
+            <button id="btnCopyApollo" class="btn btn--ghost" type="button">Copy Link</button>
+            <button id="btnExportTxt" class="btn btn--ghost" type="button">🧾 Export TXT</button>
+            <button id="btnExportPDF" class="btn" type="button">📄 Export PDF</button>
+            <button id="btnExportJSON" class="btn" type="button">Export JSON</button>
+          </div>
+
+          <p class="muted" style="margin-top:8px;">Opens a pre-filtered People search in Apollo (radius approximated via nearby metros).</p>
+        </div>
+
+        <div class="powered-by">
+          <img src="https://cdn.shopify.com/s/files/1/0705/7326/0982/files/apollo.png?v=1761147281" alt="Apollo.io">
+          <span>Powered by <strong>Apollo.io</strong></span>
+        </div>
+
+        <!-- Debug -->
+        <div class="debug-wrap" id="debugWrap">
+          <div class="debug-toggle" id="debugToggle">🔧 Debug panel (show params)</div>
+          <div class="debug-body" id="debugBody">
+            <div class="debug-groups" style="display:flex;gap:12px;flex-wrap:wrap;">
+              <div class="debug-group">
+                <label><input type="checkbox" class="debug-group-check" data-group="person" checked> Person filters</label>
+                <div class="debug-params" id="dbgPerson"></div>
+              </div>
+              <div class="debug-group">
+                <label><input type="checkbox" class="debug-group-check" data-group="org" checked> Organization filters</label>
+                <div class="debug-params" id="dbgOrg"></div>
+              </div>
+              <div class="debug-group">
+                <label><input type="checkbox" class="debug-group-check" data-group="kw" checked> Keywords / Tags</label>
+                <div class="debug-params" id="dbgKw"></div>
+              </div>
+              <div class="debug-group">
+                <label><input type="checkbox" class="debug-group-check" data-group="misc" checked> Misc</label>
+                <div class="debug-params" id="dbgMisc"></div>
+              </div>
+            </div>
+            <div class="debug-actions" style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+              <button id="btnOpenWithGroups" class="btn btn--ghost" type="button">Open with selected groups</button>
+              <button id="btnDownloadJSON" class="btn btn--ghost" type="button">Download params JSON</button>
+              <div class="small-muted">Tip: toggle groups to quickly identify which filter group causes 0 results.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts - Reference the JS file from Shopify assets -->
+{{ 'icp-builder.js' | asset_url | script_tag }}
+
+{% schema %}
+{
+  "name": "ICP Builder Tool",
+  "settings": [],
+  "presets": [
+    {
+      "name": "ICP Builder Tool"
+    }
+  ]
+}
+{% endschema %}
