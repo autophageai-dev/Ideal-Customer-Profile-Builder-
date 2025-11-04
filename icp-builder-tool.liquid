@@ -3,6 +3,8 @@
   v3.9 - Matrix Dark Theme
 {% endcomment %}
 
+<meta charset="UTF-8">
+
 <!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -158,12 +160,12 @@
               </span>
             </div>
             <select id="empRange" class="select select--firmo" aria-label="Employee range">
-              <option value="1-10">1–10</option>
-              <option value="11-50" selected>11–50</option>
-              <option value="51-200">51–200</option>
-              <option value="201-500">201–500</option>
-              <option value="501-1000">501–1,000</option>
-              <option value="1001-5000">1,001–5,000</option>
+              <option value="1-10">1&ndash;10</option>
+              <option value="11-50" selected>11&ndash;50</option>
+              <option value="51-200">51&ndash;200</option>
+              <option value="201-500">201&ndash;500</option>
+              <option value="501-1000">501&ndash;1,000</option>
+              <option value="1001-5000">1,001&ndash;5,000</option>
               <option value="5001+">5,001+</option>
             </select>
           </div>
@@ -176,10 +178,10 @@
             </div>
             <select id="revRange" class="select select--firmo" aria-label="Revenue range">
               <option value="under-1m">Under $1M</option>
-              <option value="1m-5m" selected>$1M–$5M</option>
-              <option value="5m-10m">$5M–$10M</option>
-              <option value="10m-50m">$10M–$50M</option>
-              <option value="50m-100m">$50M–$100M</option>
+              <option value="1m-5m" selected>$1M&ndash;$5M</option>
+              <option value="5m-10m">$5M&ndash;$10M</option>
+              <option value="10m-50m">$10M&ndash;$50M</option>
+              <option value="50m-100m">$50M&ndash;$100M</option>
               <option value="100m+">$100M+</option>
             </select>
           </div>
@@ -221,12 +223,12 @@
             <div class="label">
               Sales Cycle
               <span class="tip" tabindex="0" aria-label="Help: Sales Cycle">i
-                <span class="bubble" role="tooltip">Short &lt;30d, Medium 30–90d, Long &gt;90d. Affects cadence/messaging.</span>
+                <span class="bubble" role="tooltip">Short &lt;30d, Medium 30&ndash;90d, Long &gt;90d. Affects cadence/messaging.</span>
               </span>
             </div>
             <select id="salesCycle" class="select select--firmo" aria-label="Sales cycle">
               <option selected>Short (&lt; 30 days)</option>
-              <option>Medium (30–90 days)</option>
+              <option>Medium (30&ndash;90 days)</option>
               <option>Long (&gt; 90 days)</option>
             </select>
           </div>
@@ -400,7 +402,7 @@
           <div class="label">
             Seniority Levels
             <span class="tip" tabindex="0" aria-label="Help: Seniority Levels">i
-              <span class="bubble" role="tooltip">Maps to Apollo personSeniorities — select all that match your decision-makers.</span>
+              <span class="bubble" role="tooltip">Maps to Apollo personSeniorities &mdash; select all that match your decision-makers.</span>
             </span>
           </div>
           <div class="pill-row" id="seniorities" role="list"></div>
@@ -422,7 +424,7 @@
         <div class="row">
           <label style="display:flex;gap:10px;align-items:center;">
             <input type="checkbox" id="verifiedEmails" style="width:18px;height:18px;cursor:pointer;">
-            <span class="muted">Require verified emails (contactEmailStatusV2=verified)</span>
+            <span class="muted">Require verified emails only</span>
           </label>
         </div>
 
@@ -440,8 +442,8 @@
 
     <!-- Actions -->
     <div class="action-bar" role="region" aria-label="Actions">
-      <button id="btnGenerate" class="btn">⚙️ Generate ICP</button>
-      <button id="btnReset" class="btn btn--ghost" type="button">↺ Reset</button>
+      <button id="btnGenerate" class="btn">&#9881; Generate ICP</button>
+      <button id="btnReset" class="btn btn--ghost" type="button">&#8634; Reset</button>
       <div id="inlineMsg" class="muted" style="margin-top:10px;"></div>
     </div>
 
@@ -452,7 +454,7 @@
         <div id="summaryBar" class="muted" style="margin:-6px 0 14px;"></div>
 
         <div id="output" class="output" aria-live="polite">
-          <div class="placeholder">Awaiting input… Your ICP narrative will render here with a typing animation once generated.</div>
+          <div class="placeholder">Awaiting input&hellip; Your ICP narrative will render here with a typing animation once generated.</div>
         </div>
 
         <hr class="divider">
@@ -467,8 +469,8 @@
             <a id="btnOpenApollo" class="btn" href="#" target="_blank" rel="noopener">Open in Apollo</a>
             <button id="btnOpenRelaxed" class="btn btn--ghost" type="button">Open relaxed link</button>
             <button id="btnCopyApollo" class="btn btn--ghost" type="button">Copy Link</button>
-            <button id="btnExportTxt" class="btn btn--ghost" type="button">🧾 Export TXT</button>
-            <button id="btnExportPDF" class="btn" type="button">📄 Export PDF</button>
+            <button id="btnExportTxt" class="btn btn--ghost" type="button">&#128196; Export TXT</button>
+            <button id="btnExportPDF" class="btn" type="button">&#128196; Export PDF</button>
             <button id="btnExportJSON" class="btn" type="button">Export JSON</button>
           </div>
 
@@ -482,7 +484,7 @@
 
         <!-- Debug -->
         <div class="debug-wrap" id="debugWrap">
-          <div class="debug-toggle" id="debugToggle">🔧 Debug panel (show params)</div>
+          <div class="debug-toggle" id="debugToggle">&#128295; Debug panel (show params)</div>
           <div class="debug-body" id="debugBody">
             <div class="debug-groups" style="display:flex;gap:12px;flex-wrap:wrap;">
               <div class="debug-group">
